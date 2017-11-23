@@ -14,10 +14,10 @@ public class Utente {
         this.ipBan = null;
     }
 
-    public Utente(String ip, String nomeUt, ArrayList<String> ipBan){
+    public Utente(String ip, String nomeUt){
         this.ip = ip;
         this.nomeUt = nomeUt;
-        this.ipBan = ipBan;
+        this.ipBan = new ArrayList<>();
     }
 
     public String getIp() {
@@ -42,6 +42,14 @@ public class Utente {
 
     public void setIpBan(ArrayList<String> ipBan) {
         this.ipBan = ipBan;
+    }
+
+    public void addBan(String ip){
+        ipBan.add(ip);
+    }
+
+    public void removeBan(String ip){
+        ipBan.remove(ip);
     }
 
 }

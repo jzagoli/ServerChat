@@ -22,9 +22,11 @@ public class Connessione implements Runnable {
             while (run){
                 String packet = lettore.readLine();
                 String cod = packet.substring(0,1);
+                String value = packet.substring(2);
                 switch (cod) {
                     case "00":
-
+                        Utente ut = new Utente(socket.getRemoteSocketAddress().toString(),value);
+                        acc.addUtente(ut);
                         break;
                     case "10":
 
@@ -49,6 +51,10 @@ public class Connessione implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void login (){
+
     }
 
     public void stop (){
