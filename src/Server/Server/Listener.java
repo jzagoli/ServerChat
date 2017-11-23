@@ -6,14 +6,19 @@ import java.net.Socket;
 
 public class Listener  {
 
-    static Boolean  run = true;
-    static ServerSocket serverSocket;
-    static Accessi acc;
+    private static Boolean run = true;
+    private static ServerSocket serverSocket;
+    private static Accessi acc;
 
     public static void main(String[] args) throws  IOException{
+
+        System.out.println("Server Chat Partito");
+
         serverSocket = new ServerSocket(4242);
+        acc = new Accessi();
         while (run){
             Socket socket = serverSocket.accept();
+            System.out.println("Connesso:" + socket.getRemoteSocketAddress().toString());
             Thread connessione = new Thread(new Connessione(socket,acc));
             connessione.start();
         }
