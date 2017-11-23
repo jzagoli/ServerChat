@@ -1,6 +1,9 @@
 package Server;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -18,7 +21,7 @@ public class Connessione implements Runnable {
     public void run() {
         try {
             BufferedReader lettore = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter scrittore = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            PrintWriter scrittore = new PrintWriter(socket.getOutputStream(), true);
             String ip = socket.getRemoteSocketAddress().toString();
             while (run){
                 String packet = lettore.readLine();
@@ -80,7 +83,7 @@ public class Connessione implements Runnable {
 
     }
 
-    private void login (String value, BufferedWriter scrittore) throws IOException {
+    private void login(String value, PrintWriter scrittore) throws IOException {
         Utente ut = new Utente(socket.getRemoteSocketAddress().toString(),value);
         acc.addUtente(ut);
         //risposta cercando il nome
@@ -88,7 +91,7 @@ public class Connessione implements Runnable {
         scrittore.write("01"+name);
     }
 
-    private void logout (BufferedWriter scrittore) throws IOException {
+    private void logout(PrintWriter scrittore) throws IOException {
         String ip = socket.getRemoteSocketAddress().toString();
         Utente toLogout = acc.getUtenteByIp(ip);
         acc.removeUtente(toLogout);
@@ -98,7 +101,7 @@ public class Connessione implements Runnable {
         }
     }
 
-    private void ban(String value, BufferedWriter scrittore) {
+    private void ban(String value, PrintWriter scrittore) {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).addBan(mioip);
         String nomeUtCheBanna = acc.getUtenteByIp(mioip).getNomeUt();
@@ -106,7 +109,7 @@ public class Connessione implements Runnable {
         //TODO inviare l'ack all'utente bannato
     }
 
-    private void unban(String value, BufferedWriter scrittore) {
+    private void unban(String value, PrintWriter scrittore) {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).removeBan(mioip);
         String nomeUtCheSbanna = acc.getUtenteByIp(mioip).getNomeUt();
@@ -114,7 +117,7 @@ public class Connessione implements Runnable {
         //TODO inviare l'ack all'utente sbannato
     }
 
-    private void listaUtenti(BufferedWriter scrittore) throws IOException {
+    private void listaUtenti(PrintWriter scrittore) throws IOException {
         ArrayList<Utente> list = acc.getListautenti();
         String packet = "21";
         for (Utente u : list) {
@@ -123,7 +126,7 @@ public class Connessione implements Runnable {
         scrittore.write(packet);
     }
 
-    private void erroreUtNonLoggato(BufferedWriter scrittore) throws IOException {
+    private void erroreUtNonLoggato(PrintWriter scrittore) throws IOException {
         scrittore.write("02NON HAI ESEGUITO IL LOGIN. FALLO!");
     }
 
