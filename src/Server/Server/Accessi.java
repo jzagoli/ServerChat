@@ -42,5 +42,14 @@ public class  Accessi{
         }
         return ut;
     }
+
+    public Boolean isLogged(String ip){
+        Boolean flag = false;
+        Utente u = this.getUtenteByIp(ip);
+        if (u != null){
+            flag = true;
+        }
+        return flag;
+    }
 }
 

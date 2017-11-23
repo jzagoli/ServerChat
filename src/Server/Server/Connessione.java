@@ -55,12 +55,14 @@ public class Connessione implements Runnable {
     private void login (String value){
         Utente ut = new Utente(socket.getRemoteSocketAddress().toString(),value);
         acc.addUtente(ut);
+        //TODO risposta
     }
 
     private void logout (){
         String ip = socket.getRemoteSocketAddress().toString();
         Utente toLogout = acc.getUtenteByIp(ip);
         acc.removeUtente(toLogout);
+        //TODO risposta
     }
 
     public void stop (){
