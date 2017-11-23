@@ -25,11 +25,10 @@ public class Connessione implements Runnable {
                 String value = packet.substring(2);
                 switch (cod) {
                     case "00":
-                        Utente ut = new Utente(socket.getRemoteSocketAddress().toString(),value);
-                        acc.addUtente(ut);
+                        login(value);
                         break;
                     case "10":
-
+                        logout();
                         break;
                     case "20":
 
@@ -53,8 +52,15 @@ public class Connessione implements Runnable {
         }
     }
 
-    private void login (){
+    private void login (String value){
+        Utente ut = new Utente(socket.getRemoteSocketAddress().toString(),value);
+        acc.addUtente(ut);
+    }
 
+    private void logout (){
+        String ip = socket.getRemoteSocketAddress().toString();
+        Utente toLogout = acc.getUtenteByIp(ip);
+        acc.removeUtente(toLogout);
     }
 
     public void stop (){

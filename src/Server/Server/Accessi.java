@@ -20,5 +20,27 @@ public class  Accessi{
     public void removeUtente (Utente u){
         listautenti.remove(u);
     }
+
+    public Utente getUtenteByIp (String ip){
+        Utente ut = null;
+        for (Utente u:listautenti) {
+            if (u.getIp().equals(ip)){
+                ut = u;
+                break;
+            }
+        }
+        return ut;
+    }
+
+    public Utente getUtenteByName (String name){
+        Utente ut = null;
+        for (Utente u:listautenti) {
+            if (u.getNomeUt().equals(name)){
+                ut = u;
+                break;
+            }
+        }
+        return ut;
+    }
 }
 
