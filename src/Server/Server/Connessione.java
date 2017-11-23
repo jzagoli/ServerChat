@@ -8,9 +8,11 @@ import java.net.Socket;
 public class Connessione implements Runnable {
     private Socket socket;
     private Boolean run = true;
+    private Accessi acc;
 
-    public Connessione (Socket s){
+    public Connessione (Socket s,Accessi accessi){
         this.socket = s;
+        this.acc = accessi;
     }
 
     @Override
@@ -20,6 +22,29 @@ public class Connessione implements Runnable {
             while (run){
                 String packet = lettore.readLine();
                 String cod = packet.substring(0,1);
+                switch (cod) {
+                    case "00":
+
+                        break;
+                    case "10":
+
+                        break;
+                    case "20":
+
+                        break;
+                    case "30":
+
+                        break;
+                    case "31":
+
+                        break;
+                    case "40":
+
+                        break;
+                    case "50":
+
+                        break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
