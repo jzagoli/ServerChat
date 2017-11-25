@@ -6,15 +6,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Connessione implements Runnable {
     private Socket socket;
     private Boolean run = true;
     private Accessi acc;
+    private HashMap<String, Socket> socketMap;
 
-    public Connessione (Socket s,Accessi accessi){
+    public Connessione(Socket s, Accessi accessi, HashMap<String, Socket> socketMap) {
         this.socket = s;
         this.acc = accessi;
+        this.socketMap = socketMap;
     }
 
     @Override
@@ -104,22 +107,31 @@ public class Connessione implements Runnable {
         System.out.println("logout:" + ip);
     }
 
-    private void ban(String value, PrintWriter scrittore) {
+    private void ban(String value, PrintWriter scrittore) throws IOException {
+        //aggiungo il mio ip nella lista di persone che l'utente da bannare non può contattare
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).addBan(mioip);
-        String nomeUtCheBanna = acc.getUtenteByIp(mioip).getNomeUt();
-        String ack = "32" + nomeUtCheBanna + ";1";
-        //TODO inviare l'ack all'utente bannato
-        System.out.println(acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt() + " ha bannato " + value);
+        String nomeUtBannato = acc.getUtenteByIp(value).getNomeUt();
+        String ack = "32" + nomeUtBannato + ";1";
+        //invio l'ack all'utente bannato
+        Socket socketUtBannato = socketMap.get(value);
+        PrintWriter scrittoreUtBannato = new PrintWriter(socketUtBannato.getOutputStream(), true);
+        scrittoreUtBannato.write(ack);
+        scrittoreUtBannato.flush();
+        System.out.println(acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt() + " ha bannato " + acc.getUtenteByIp(value).getNomeUt());
     }
 
-    private void unban(String value, PrintWriter scrittore) {
+    private void unban(String value, PrintWriter scrittore) throws IOException {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).removeBan(mioip);
-        String nomeUtCheSbanna = acc.getUtenteByIp(mioip).getNomeUt();
-        String ack = "32" + nomeUtCheSbanna + ";0";
-        //TODO inviare l'ack all'utente sbannato
-        System.out.println(acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt() + " ha sbannato " + value);
+        String nomeUtSbannato = acc.getUtenteByIp(value).getNomeUt();
+        String ack = "32" + nomeUtSbannato + ";0";
+        //invio l'ack all'utente sbannato
+        Socket socketUtSbannato = socketMap.get(value);
+        PrintWriter scrittoreUtSbannato = new PrintWriter(socketUtSbannato.getOutputStream(), true);
+        scrittoreUtSbannato.write(ack);
+        scrittoreUtSbannato.flush();
+        System.out.println(acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt() + " ha sbannato " + acc.getUtenteByIp(value).getNomeUt());
     }
 
     private void listaUtenti(PrintWriter scrittore) throws IOException {
