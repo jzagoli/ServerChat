@@ -39,7 +39,7 @@ public class Connessione implements Runnable {
                     case "20":
                         if (acc.isLogged(ip)) {
                             listaUtenti(scrittore);
-                            System.out.println("inviata lista utenti");
+                            System.out.println("inviata lista utenti a "+ ip);
                         } else {
                             erroreUtNonLoggato(scrittore);
                         }
@@ -89,6 +89,7 @@ public class Connessione implements Runnable {
         //risposta cercando il nome
         String name = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt();
         scrittore.write("01"+name);
+        scrittore.flush();
     }
 
     private void logout(PrintWriter scrittore) throws IOException {
@@ -97,7 +98,8 @@ public class Connessione implements Runnable {
         acc.removeUtente(toLogout);
         //risposta di logout
         if (!acc.isLogged(ip)) {
-            scrittore.write("10");
+            scrittore.write("11");
+            scrittore.flush();
         }
     }
 
@@ -124,10 +126,12 @@ public class Connessione implements Runnable {
             packet += u.getNomeUt() + ";";
         }
         scrittore.write(packet);
+        scrittore.flush();
     }
 
     private void erroreUtNonLoggato(PrintWriter scrittore) throws IOException {
         scrittore.write("02NON HAI ESEGUITO IL LOGIN. FALLO!");
+        scrittore.flush();
     }
 
     public void stop (){
