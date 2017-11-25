@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +24,11 @@ public class Connessione implements Runnable {
 
     @Override
     public void run() {
+        String ip = socket.getRemoteSocketAddress().toString();
+        Utente questoUt = acc.getUtenteByIp(ip);
         try {
             BufferedReader lettore = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter scrittore = new PrintWriter(socket.getOutputStream(), true);
-            String ip = socket.getRemoteSocketAddress().toString();
             while (run){
                 String packet = lettore.readLine();
                 String cod = packet.substring(0, 2);
@@ -75,10 +77,16 @@ public class Connessione implements Runnable {
                         break;
                 }
             }
+        } catch (SocketException se) {
+            if (se.getMessage().equals("Connection reset")) {
+                acc.removeUtente(questoUt);
+                this.stop();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        System.out.println("chiusa socket");
 
     }
 
