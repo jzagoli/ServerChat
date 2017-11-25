@@ -52,4 +52,12 @@ public class Utente {
         ipBan.remove(ip);
     }
 
+    public Boolean canContact(Utente ut) {
+        String ip = ut.getIp();
+        Boolean flag = true;
+        if (ipBan.contains(ip)) {
+            flag = false;
+        }
+        return flag;
+    }
 }

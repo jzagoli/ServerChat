@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Connessione implements Runnable {
     private Socket socket;
@@ -60,14 +61,14 @@ public class Connessione implements Runnable {
                         break;
                     case "40":
                         if (acc.isLogged(ip)) {
-
+                            mexSingolo(value, scrittore);
                         } else {
                             erroreUtNonLoggato(scrittore);
                         }
                         break;
                     case "50":
                         if (acc.isLogged(ip)) {
-
+                            mexBroadcast(value, scrittore);
                         } else {
                             erroreUtNonLoggato(scrittore);
                         }
@@ -145,6 +146,38 @@ public class Connessione implements Runnable {
         System.out.println("inviata lista utenti a "+ socket.getRemoteSocketAddress().toString());
     }
 
+    private void mexSingolo(String value, PrintWriter scrittore) throws IOException {
+        String[] packetvalue = value.split(";");
+        Utente mioUt = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString());
+        Utente utDaContattare = acc.getUtenteByName(packetvalue[0]);
+        if (mioUt.canContact(utDaContattare)) {
+            Socket socketUtDaContattare = socketMap.get(utDaContattare.getIp());
+            PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
+            scrittoreUtDaContattare.write("81" + mioUt.getNomeUt() + ";" + packetvalue[1]);
+            scrittoreUtDaContattare.flush();
+            System.out.println("Inviato messaggio da " + mioUt.getNomeUt() + " a " + utDaContattare.getNomeUt());
+        } else {
+            erroreSeiBannato(scrittore);
+        }
+    }
+
+    private void mexBroadcast(String value, PrintWriter scrittore) throws IOException {
+        String[] packetvalue = value.split(";");
+        Utente mioUt = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString());
+        List<Utente> listUtDaContattare = acc.getListautenti();
+        for (Utente u : listUtDaContattare) {
+            if (mioUt.canContact(u)) {
+                Socket socketUtDaContattare = socketMap.get(u.getIp());
+                PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
+                scrittoreUtDaContattare.write("82" + mioUt.getNomeUt() + ";" + packetvalue[1]);
+                scrittoreUtDaContattare.flush();
+                System.out.println("Inviato messaggio broadcast da " + mioUt.getNomeUt() + " a " + u.getNomeUt());
+            } else {
+                erroreSeiBannato(scrittore);
+            }
+        }
+    }
+
     private void erroreUtNonLoggato(PrintWriter scrittore) throws IOException {
         scrittore.write("02NON HAI ESEGUITO IL LOGIN. FALLO!");
         scrittore.flush();
@@ -155,6 +188,12 @@ public class Connessione implements Runnable {
         scrittore.write("02IL TUO NOME E' ERRATO. SCEGLINE UNO DIVERSO");
         scrittore.flush();
         System.out.println("Errore nome errato:"+socket.getRemoteSocketAddress().toString());
+    }
+
+    private void erroreSeiBannato(PrintWriter scrittore) throws IOException {
+        scrittore.write("02SEI STATO BANNATO DALL'UTENTE CHE HAI TENTATO DI CONTATTARE");
+        scrittore.flush();
+        System.out.println("Errore utente bannato:" + socket.getRemoteSocketAddress().toString());
     }
 
     public void stop (){
