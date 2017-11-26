@@ -16,7 +16,7 @@ public class Connessione implements Runnable {
     private Accessi acc;
     private HashMap<String, Socket> socketMap;
 
-    public Connessione(Socket s, Accessi accessi, HashMap<String, Socket> socketMap) {
+    Connessione(Socket s, Accessi accessi, HashMap<String, Socket> socketMap) {
         this.socket = s;
         this.acc = accessi;
         this.socketMap = socketMap;
@@ -25,7 +25,7 @@ public class Connessione implements Runnable {
     @Override
     public void run() {
         String ip = socket.getRemoteSocketAddress().toString();
-        Utente questoUt = acc.getUtenteByIp(ip);
+        Utente questoUt = null;
         try {
             BufferedReader lettore = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter scrittore = new PrintWriter(socket.getOutputStream(), true);
@@ -36,6 +36,7 @@ public class Connessione implements Runnable {
                 switch (cod) {
                     case "00":
                         login(value,scrittore);
+                        questoUt = acc.getUtenteByIp(ip);
                         break;
                     case "10":
                         logout(scrittore);
@@ -49,14 +50,14 @@ public class Connessione implements Runnable {
                         break;
                     case "30":
                         if (acc.isLogged(ip)) {
-                            ban(value, scrittore);
+                            ban(value);
                         } else {
                             erroreUtNonLoggato(scrittore);
                         }
                         break;
                     case "31":
                         if (acc.isLogged(ip)) {
-                            unban(value, scrittore);
+                            unban(value);
                         } else {
                             erroreUtNonLoggato(scrittore);
                         }
@@ -86,7 +87,7 @@ public class Connessione implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("chiusa socket");
+        System.out.println("chiusa connessione con:" + ip);
 
     }
 
@@ -116,7 +117,7 @@ public class Connessione implements Runnable {
         System.out.println("logout:" + ip);
     }
 
-    private void ban(String value, PrintWriter scrittore) throws IOException {
+    private void ban(String value) throws IOException {
         //aggiungo il mio ip nella lista di persone che l'utente da bannare non può contattare
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).addBan(mioip);
@@ -130,7 +131,7 @@ public class Connessione implements Runnable {
         System.out.println(acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt() + " ha bannato " + acc.getUtenteByIp(value).getNomeUt());
     }
 
-    private void unban(String value, PrintWriter scrittore) throws IOException {
+    private void unban(String value) throws IOException {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).removeBan(mioip);
         String nomeUtSbannato = acc.getUtenteByIp(value).getNomeUt();
@@ -145,11 +146,11 @@ public class Connessione implements Runnable {
 
     private void listaUtenti(PrintWriter scrittore) throws IOException {
         ArrayList<Utente> list = acc.getListautenti();
-        String packet = "21";
         for (Utente u : list) {
-            packet += u.getNomeUt() + ";";
+            scrittore.write("21" + u.getNomeUt());
+            scrittore.flush();
         }
-        scrittore.write(packet);
+        scrittore.write("21FINE");
         scrittore.flush();
         System.out.println("inviata lista utenti a "+ socket.getRemoteSocketAddress().toString());
     }
@@ -204,7 +205,7 @@ public class Connessione implements Runnable {
         System.out.println("Errore utente bannato:" + socket.getRemoteSocketAddress().toString());
     }
 
-    public void stop (){
+    private void stop() {
         this.run = false;
     }
 }
