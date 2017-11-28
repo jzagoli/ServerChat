@@ -30,5 +30,8 @@ public class Listener  {
     public void stop () throws IOException {
         this.run = false;
         serverSocket.close();
+        for (Socket s : socketmap.values()) {
+            s.close();
+        }
     }
 }
