@@ -10,15 +10,20 @@ public class Gui {
     private JButton Stop;
     private JButton Start;
     private JTextArea Connessi;
+    private Boolean listenerStarted = false;
 
     public Gui(Listener listener) {
         RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi);
         refreshTextArea.vai(listener);
         Thread t = new Thread(listener);
-        Start.addActionListener(actionEvent -> t.start());
+        Start.addActionListener(actionEvent -> {
+            if (!listenerStarted) t.start();
+            listenerStarted = true;
+        });
         Stop.addActionListener(actionEvent -> {
             try {
-                listener.stop();
+                if (listenerStarted) listener.stop();
+                listenerStarted = false;
             } catch (IOException e) {
                 e.printStackTrace();
             }
