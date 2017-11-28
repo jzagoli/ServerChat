@@ -1,6 +1,7 @@
 package Server;
 
 import javax.swing.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Gui {
@@ -10,9 +11,13 @@ public class Gui {
     private JButton Stop;
     private JButton Start;
     private JTextArea Connessi;
+    private JScrollPane Console;
+    private JTextArea Consoletext;
+    private JLabel labelLoggati;
+    private JLabel labelConnessi;
 
-    public Gui(Listener listener) {
-        RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi);
+    public Gui(Listener listener) throws FileNotFoundException {
+        RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi, Consoletext);
         refreshTextArea.vai(listener);
         Thread t = new Thread(listener);
         Start.addActionListener(actionEvent -> t.start());
@@ -30,7 +35,7 @@ public class Gui {
         Listener listener = new Listener();
         frame.setContentPane(new Gui(listener).JPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(580, 750);
+        frame.setSize(580, 850);
         frame.setResizable(false);
         frame.setVisible(true);
     }
