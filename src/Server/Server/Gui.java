@@ -13,6 +13,16 @@ public class Gui {
     private JButton Start;
     private JTextArea Connessi;
 
+    public static void main(String[] args) throws IOException {
+        JFrame frame = new JFrame("Gui");
+        Listener listener = new Listener();
+        frame.setContentPane(new Gui(listener).JPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(570, 700);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
     public Gui(Listener listener) {
         Thread t = new Thread(listener);
         Start.addActionListener(actionEvent -> {
@@ -27,21 +37,14 @@ public class Gui {
         });
     }
 
-    public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame("Gui");
-        Listener listener = new Listener();
+    public void vai(Listener listener) {
         Thread rc = new Thread(new RefreshConnessi(listener));
         Thread ru = new Thread(new RefreshUtenti(listener));
         rc.start();
         ru.start();
-        frame.setContentPane(new Gui(listener).JPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(570, 700);
-        frame.setResizable(false);
-        frame.setVisible(true);
     }
 
-    private static class RefreshUtenti implements Runnable {
+    private class RefreshUtenti implements Runnable {
 
         Listener l;
         Accessi a;
@@ -59,14 +62,14 @@ public class Gui {
                 for (Utente u : a.getListautenti()) {
                     s += u.getNomeUt() + "\n";
                 }
-                //Utenti.setText(s);
+                Utenti.setText(s);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static class RefreshConnessi implements Runnable {
+    private class RefreshConnessi implements Runnable {
 
         Listener l;
         HashMap<String, Socket> map;
@@ -84,7 +87,7 @@ public class Gui {
                 for (Socket socket : map.values()) {
                     s += socket.getRemoteSocketAddress().toString() + "\n";
                 }
-                //Utenti.setText(s);
+                Utenti.setText(s);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
