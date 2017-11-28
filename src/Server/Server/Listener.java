@@ -41,9 +41,9 @@ public class Listener implements Runnable {
 
     public void stop() throws IOException {
         run = false;
-        serverSocket.close();
         for (Socket s : socketmap.values()) {
             s.close();
         }
+        serverSocket.close();
     }
 }

@@ -81,6 +81,7 @@ public class Connessione implements Runnable {
         } catch (SocketException se) {
             if (se.getMessage().equals("Connection reset")) {
                 acc.removeUtente(questoUt);
+                socketMap.remove(ip);
                 this.stop();
             }
         } catch (IOException e) {
