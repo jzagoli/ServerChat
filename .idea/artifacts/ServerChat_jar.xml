@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ServerChat:jar">
+    <output-path>$PROJECT_DIR$/artifacts/ServerChat_jar</output-path>
+    <root id="archive" name="ServerChat.jar">
+      <element id="module-output" name="ServerChat" />
+      <element id="extracted-dir" path="$APPLICATION_HOME_DIR$/lib/jgoodies-forms.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
