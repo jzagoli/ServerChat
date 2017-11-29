@@ -1,30 +1,32 @@
 package Server;
 
 import javax.swing.*;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.HashMap;
 
 public class RefreshTextArea {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private JTextArea Utenti, Connessi, Console;
 
     public RefreshTextArea(JTextArea utenti, JTextArea connessi, JTextArea console) throws FileNotFoundException {
         Utenti = utenti;
         Connessi = connessi;
         Console = console;
-        System.setOut(new PrintStream(baos, true));
     }
 
     public void vai(Listener listener) {
         Thread rc = new Thread(new RefreshConnessi(listener));
         Thread ru = new Thread(new RefreshUtenti(listener));
-        Thread rcons = new Thread(new RefreshConsole(listener));
-        rcons.start();
+        /*Thread rcons = new Thread(new RefreshConsole(listener));
+        rcons.start();*/
         rc.start();
         ru.start();
+        PrintStream printStream = new PrintStream(new StdoutToArea(Console));
+        System.setOut(printStream);
+        System.setErr(printStream);
     }
 
     private class RefreshUtenti implements Runnable {
@@ -81,9 +83,11 @@ public class RefreshTextArea {
         }
     }
 
+    /*
     private class RefreshConsole implements Runnable {
 
         Listener l;
+        StdoutToArea outputStream = new StdoutToArea(Console);
 
         public RefreshConsole(Listener l) {
             this.l = l;
@@ -94,11 +98,28 @@ public class RefreshTextArea {
             while (true) {
                 try {
                     Thread.sleep(2000);
-                    Console.setText(baos.toString());
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+    */
+
+    public class StdoutToArea extends OutputStream {
+        private JTextArea textArea;
+
+        public StdoutToArea(JTextArea textArea) {
+            this.textArea = textArea;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            // redirects data to the text area
+            textArea.append(String.valueOf((char) b));
+            // scrolls the text area to the end of data
+            textArea.setCaretPosition(textArea.getDocument().getLength());
         }
     }
 }

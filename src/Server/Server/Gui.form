@@ -50,6 +50,7 @@
         <properties>
           <background color="-13947344"/>
           <editable value="false"/>
+          <foreground color="-1315861"/>
           <text value=""/>
         </properties>
       </component>
@@ -81,6 +82,8 @@
         <properties>
           <background color="-13947344"/>
           <editable value="false"/>
+          <foreground color="-1315861"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="96cc1" class="javax.swing.JLabel" binding="labelLoggati">
@@ -119,6 +122,7 @@
             <properties>
               <background color="-13947344"/>
               <editable value="false"/>
+              <foreground color="-1315861"/>
             </properties>
           </component>
         </children>
