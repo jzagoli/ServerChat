@@ -15,11 +15,11 @@ public class Listener implements Runnable {
     Listener() {
     }
 
-    public static Accessi getAcc() {
+    static Accessi getAcc() {
         return acc;
     }
 
-    public static HashMap<String, Socket> getSocketmap() {
+    static HashMap<String, Socket> getSocketmap() {
         return socketmap;
     }
 
@@ -35,11 +35,11 @@ public class Listener implements Runnable {
                 System.out.println("Connesso:" + socket.getRemoteSocketAddress().toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Server Chat Fermato");
         }
     }
 
-    public void stop() throws IOException {
+    void stop() throws IOException {
         run = false;
         for (Socket s : socketmap.values()) {
             s.close();

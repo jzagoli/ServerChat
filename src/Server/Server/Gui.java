@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static java.awt.Color.gray;
+
 public class Gui {
     private JPanel JPanel;
     private JLabel Titolo;
@@ -17,6 +19,8 @@ public class Gui {
     private JLabel labelConnessi;
 
     public Gui(Listener listener) throws FileNotFoundException {
+        Utenti.setBorder(BorderFactory.createLineBorder(gray));
+        Connessi.setBorder(BorderFactory.createLineBorder(gray));
         RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi, Consoletext);
         refreshTextArea.vai(listener);
         Thread t = new Thread(listener);
