@@ -24,10 +24,13 @@ public class Gui {
         RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi, Consoletext);
         refreshTextArea.vai(listener);
         Thread t = new Thread(listener);
-        Start.addActionListener(actionEvent -> t.start());
+        Stop.setEnabled(false);
+        Start.addActionListener(actionEvent -> {t.start(); Start.setEnabled(false);Stop.setEnabled(true);});
         Stop.addActionListener(actionEvent -> {
             try {
                 listener.stop();
+                Start.setEnabled(true);
+                Stop.setEnabled(false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

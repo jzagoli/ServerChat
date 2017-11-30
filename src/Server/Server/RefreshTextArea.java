@@ -20,8 +20,6 @@ public class RefreshTextArea {
     public void vai(Listener listener) {
         Thread rc = new Thread(new RefreshConnessi(listener));
         Thread ru = new Thread(new RefreshUtenti(listener));
-        /*Thread rcons = new Thread(new RefreshConsole(listener));
-        rcons.start();*/
         rc.start();
         ru.start();
         PrintStream printStream = new PrintStream(new StdoutToArea(Console));
@@ -82,30 +80,6 @@ public class RefreshTextArea {
             }
         }
     }
-
-    /*
-    private class RefreshConsole implements Runnable {
-
-        Listener l;
-        StdoutToArea outputStream = new StdoutToArea(Console);
-
-        public RefreshConsole(Listener l) {
-            this.l = l;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    Thread.sleep(2000);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    */
 
     public class StdoutToArea extends OutputStream {
         private JTextArea textArea;
