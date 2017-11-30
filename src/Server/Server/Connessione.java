@@ -189,19 +189,19 @@ public class Connessione implements Runnable {
     }
 
     private void erroreUtNonLoggato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02NON HAI ESEGUITO IL LOGIN. FALLO!");
+        scrittore.write("02NON LOGGATO");
         scrittore.flush();
         System.out.println("Errore ut non loggato :"+socket.getRemoteSocketAddress().toString());
     }
 
     private void erroreNomeErrato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02IL TUO NOME E' ERRATO. SCEGLINE UNO DIVERSO");
+        scrittore.write("02LOGIN ERRATO");
         scrittore.flush();
         System.out.println("Errore nome errato:"+socket.getRemoteSocketAddress().toString());
     }
 
     private void erroreSeiBannato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02SEI STATO BANNATO DALL'UTENTE CHE HAI TENTATO DI CONTATTARE");
+        scrittore.write("02BANNATO");
         scrittore.flush();
         System.out.println("Errore utente bannato:" + socket.getRemoteSocketAddress().toString());
     }
