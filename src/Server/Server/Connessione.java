@@ -98,7 +98,7 @@ public class Connessione implements Runnable {
             acc.addUtente(ut);
             //risposta cercando il nome
             String name = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString()).getNomeUt();
-            scrittore.write("01" + name);
+            scrittore.write("01" + name+"\n");
             scrittore.flush();
             System.out.println("login:" + socket.getRemoteSocketAddress().toString() + "|" + value);
         } else {
@@ -112,7 +112,7 @@ public class Connessione implements Runnable {
         acc.removeUtente(toLogout);
         //risposta di logout
         if (!acc.isLogged(ip)) {
-            scrittore.write("11");
+            scrittore.write("11"+"\n");
             scrittore.flush();
         }
         System.out.println("logout:" + ip);
@@ -123,7 +123,7 @@ public class Connessione implements Runnable {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).addBan(mioip);
         String nomeUtBannato = acc.getUtenteByIp(value).getNomeUt();
-        String ack = "32" + nomeUtBannato + ";1";
+        String ack = "32" + nomeUtBannato + ";1"+"\n";
         //invio l'ack all'utente bannato
         Socket socketUtBannato = socketMap.get(value);
         PrintWriter scrittoreUtBannato = new PrintWriter(socketUtBannato.getOutputStream(), true);
@@ -136,7 +136,7 @@ public class Connessione implements Runnable {
         String mioip = socket.getRemoteSocketAddress().toString();
         acc.getUtenteByName(value).removeBan(mioip);
         String nomeUtSbannato = acc.getUtenteByIp(value).getNomeUt();
-        String ack = "32" + nomeUtSbannato + ";0";
+        String ack = "32" + nomeUtSbannato + ";0"+"\n";
         //invio l'ack all'utente sbannato
         Socket socketUtSbannato = socketMap.get(value);
         PrintWriter scrittoreUtSbannato = new PrintWriter(socketUtSbannato.getOutputStream(), true);
@@ -148,10 +148,10 @@ public class Connessione implements Runnable {
     private void listaUtenti(PrintWriter scrittore) throws IOException {
         ArrayList<Utente> list = acc.getListautenti();
         for (Utente u : list) {
-            scrittore.write("21" + u.getNomeUt());
+            scrittore.write("21" + u.getNomeUt()+"\n");
             scrittore.flush();
         }
-        scrittore.write("21FINE");
+        scrittore.write("21FINE"+"\n");
         scrittore.flush();
         System.out.println("inviata lista utenti a "+ socket.getRemoteSocketAddress().toString());
     }
@@ -163,7 +163,7 @@ public class Connessione implements Runnable {
         if (mioUt.canContact(utDaContattare)) {
             Socket socketUtDaContattare = socketMap.get(utDaContattare.getIp());
             PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
-            scrittoreUtDaContattare.write("81" + mioUt.getNomeUt() + ";" + packetvalue[1]);
+            scrittoreUtDaContattare.write("81" + mioUt.getNomeUt() + ";" + packetvalue[1]+"\n");
             scrittoreUtDaContattare.flush();
             System.out.println("Inviato messaggio da " + mioUt.getNomeUt() + " a " + utDaContattare.getNomeUt());
         } else {
@@ -179,7 +179,7 @@ public class Connessione implements Runnable {
             if (mioUt.canContact(u)) {
                 Socket socketUtDaContattare = socketMap.get(u.getIp());
                 PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
-                scrittoreUtDaContattare.write("82" + mioUt.getNomeUt() + ";" + packetvalue[1]);
+                scrittoreUtDaContattare.write("82" + mioUt.getNomeUt() + ";" + packetvalue[1]+"\n");
                 scrittoreUtDaContattare.flush();
                 System.out.println("Inviato messaggio broadcast da " + mioUt.getNomeUt() + " a " + u.getNomeUt());
             } else {
@@ -189,19 +189,19 @@ public class Connessione implements Runnable {
     }
 
     private void erroreUtNonLoggato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02NON LOGGATO");
+        scrittore.write("02NON LOGGATO"+"\n");
         scrittore.flush();
         System.out.println("Errore ut non loggato :"+socket.getRemoteSocketAddress().toString());
     }
 
     private void erroreNomeErrato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02LOGIN ERRATO");
+        scrittore.write("02LOGIN ERRATO"+"\n");
         scrittore.flush();
         System.out.println("Errore nome errato:"+socket.getRemoteSocketAddress().toString());
     }
 
     private void erroreSeiBannato(PrintWriter scrittore) throws IOException {
-        scrittore.write("02BANNATO");
+        scrittore.write("02BANNATO"+"\n");
         scrittore.flush();
         System.out.println("Errore utente bannato:" + socket.getRemoteSocketAddress().toString());
     }
