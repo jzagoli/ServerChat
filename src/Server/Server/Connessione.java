@@ -93,7 +93,7 @@ public class Connessione implements Runnable {
     }
 
     private void login(String value, PrintWriter scrittore) throws IOException {
-        if (!value.contains(";")||!value.contains("FINE")) {
+        if ((!value.contains(";"))||(value.contains("FINE"))){
             Utente ut = new Utente(socket.getRemoteSocketAddress().toString(), value);
             acc.addUtente(ut);
             //risposta cercando il nome
