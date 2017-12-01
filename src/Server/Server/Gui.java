@@ -23,15 +23,24 @@ public class Gui {
         Connessi.setBorder(BorderFactory.createLineBorder(gray));
         RefreshTextArea refreshTextArea = new RefreshTextArea(Utenti, Connessi, Consoletext);
         refreshTextArea.vai(listener);
-        Thread t = new Thread(listener);
         Stop.setEnabled(false);
-        Start.addActionListener(actionEvent -> {t.start(); Start.setEnabled(false);Stop.setEnabled(true);});
+        //la cosa dell'array di thread me l'ha fatta intellij sennò non andava
+        final Thread[] t = new Thread[1];
+        Start.addActionListener(actionEvent -> {
+            t[0] = new Thread(listener);
+            t[0].start();
+            Start.setEnabled(false);
+            Stop.setEnabled(true);}
+            );
         Stop.addActionListener(actionEvent -> {
             try {
                 listener.stop();
+                t[0].join();
                 Start.setEnabled(true);
                 Stop.setEnabled(false);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });

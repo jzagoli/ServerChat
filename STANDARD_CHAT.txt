@@ -1,0 +1,18 @@
+STANDARD DA UTILIZZARE PER IMPLEMENTAZIONE PROTOCOLLO CHAT
+Codici pacchetti:
+-00NOMEUTENTE: Login (C --> S) - NON E' CONSENTITO IL CARATTERE ";"
+-01NOMEUTENTE: Risposta di avvenuto login (S --> C)
+-02TIPOERRORE: Messaggio di errore (S --> C)
+-10: Logout (C --> S)
+-11: Messaggio di avvenuto logout (S --> C)
+-20: Richiesta lista utenti (C --> S)
+-21NOMEUTENTE: Risposta con pacchetto per ogni utente loggato. L'ultimo pacchetto sarà 21FINE (S --> C)
+-30NOMEUTENTE: Ban di un utente (C --> S)
+-31NOMEUTENTE: Unban di un utente (S --> C)
+-32NOMEUTENTE;BAN: ACK che riceve l'utente bannato o unbannato (S --> C) - BAN è una stringa contente "1" per il ban o "0" per l'unban
+-40NOMEUTENTE;MESSAGGIO: Messaggio per un utente privato (nome utente all'inizio, utilizzo del ";" come separatore e contenuto del messaggio, C --> S)
+-50MESSAGGIO: Messaggio broadcast (C --> S)
+-81NOMEUTENTE;MESSAGGIO: Risposta al messaggio privato (nome utente all'inizio, utilizzo del ";" come separatore e contenuto del messaggio, S --> C)
+-82NOMEUTENTE;MESSAGGIO: Risposta al messaggio broadcast (nome utente all'inizio, utilizzo del ";" come separatore e contenuto del messaggio, S --> C)
+
+Porta standard: 4242
