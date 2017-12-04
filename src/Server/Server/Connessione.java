@@ -172,14 +172,13 @@ public class Connessione implements Runnable {
     }
 
     private void mexBroadcast(String value, PrintWriter scrittore) throws IOException {
-        String[] packetvalue = value.split(";");
         Utente mioUt = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString());
         List<Utente> listUtDaContattare = acc.getListautenti();
         for (Utente u : listUtDaContattare) {
             if (mioUt.canContact(u)) {
                 Socket socketUtDaContattare = socketMap.get(u.getIp());
                 PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
-                scrittoreUtDaContattare.write("82" + mioUt.getNomeUt() + ";" + packetvalue[1]+"\n");
+                scrittoreUtDaContattare.write("82" + mioUt.getNomeUt() + ";" +value+"\n");
                 scrittoreUtDaContattare.flush();
                 System.out.println("Inviato messaggio broadcast da " + mioUt.getNomeUt() + " a " + u.getNomeUt());
             } else {
