@@ -163,7 +163,11 @@ public class Connessione implements Runnable {
         if (mioUt.canContact(utDaContattare)) {
             Socket socketUtDaContattare = socketMap.get(utDaContattare.getIp());
             PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
-            scrittoreUtDaContattare.write("81" + mioUt.getNomeUt() + ";" + packetvalue[1]+"\n");
+            String packet = "81" + mioUt.getNomeUt() + ";";
+            for (int i = 1;i<=packetvalue.length;i++){
+                packet += packetvalue[i];
+            }
+            scrittoreUtDaContattare.write(packet+"\n");
             scrittoreUtDaContattare.flush();
             System.out.println("Inviato messaggio da " + mioUt.getNomeUt() + " a " + utDaContattare.getNomeUt());
         } else {
