@@ -93,7 +93,14 @@ public class Connessione implements Runnable {
     }
 
     private void login(String value, PrintWriter scrittore) throws IOException {
-        if ((!value.contains(";"))&&(!value.contains("FINE"))){
+        if (
+                (!value.contains(";"))&&
+                (!value.contains("FINE"))&&
+                (!acc.getListaNomi().contains(value))&&
+                (value.trim().length() >= 3)&&
+                (value.trim().length() <= 12)&&
+                (value != null)
+                ){
             Utente ut = new Utente(socket.getRemoteSocketAddress().toString(), value);
             acc.addUtente(ut);
             //risposta cercando il nome
@@ -147,11 +154,11 @@ public class Connessione implements Runnable {
 
     private void listaUtenti(PrintWriter scrittore) throws IOException {
         ArrayList<Utente> list = acc.getListautenti();
+        String packet = "";
         for (Utente u : list) {
-            scrittore.write("21" + u.getNomeUt()+"\n");
-            scrittore.flush();
+            packet += "21" + u.getNomeUt()+";";
         }
-        scrittore.write("21FINE"+"\n");
+        scrittore.write(packet);
         scrittore.flush();
         System.out.println("inviata lista utenti a "+ socket.getRemoteSocketAddress().toString());
     }
@@ -160,18 +167,22 @@ public class Connessione implements Runnable {
         String[] packetvalue = value.split(";");
         Utente mioUt = acc.getUtenteByIp(socket.getRemoteSocketAddress().toString());
         Utente utDaContattare = acc.getUtenteByName(packetvalue[0]);
-        if (mioUt.canContact(utDaContattare)) {
-            Socket socketUtDaContattare = socketMap.get(utDaContattare.getIp());
-            PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
-            String packet = "81" + mioUt.getNomeUt() + ";";
-            for (int i = 1;i<=packetvalue.length;i++){
-                packet += packetvalue[i];
+        if(acc.isLogged(utDaContattare.getIp())) {
+            if (mioUt.canContact(utDaContattare)) {
+                Socket socketUtDaContattare = socketMap.get(utDaContattare.getIp());
+                PrintWriter scrittoreUtDaContattare = new PrintWriter(socketUtDaContattare.getOutputStream(), true);
+                String packet = "81" + mioUt.getNomeUt() + ";";
+                for (int i = 1; i <= packetvalue.length; i++) {
+                    packet += packetvalue[i];
+                }
+                scrittoreUtDaContattare.write(packet + "\n");
+                scrittoreUtDaContattare.flush();
+                System.out.println("Inviato messaggio da " + mioUt.getNomeUt() + " a " + utDaContattare.getNomeUt());
+            } else {
+                erroreSeiBannato(scrittore);
             }
-            scrittoreUtDaContattare.write(packet+"\n");
-            scrittoreUtDaContattare.flush();
-            System.out.println("Inviato messaggio da " + mioUt.getNomeUt() + " a " + utDaContattare.getNomeUt());
         } else {
-            erroreSeiBannato(scrittore);
+            erroreUtToContactNonLoggato(scrittore,utDaContattare);
         }
     }
 
@@ -208,6 +219,13 @@ public class Connessione implements Runnable {
         scrittore.flush();
         System.out.println("Errore utente bannato:" + socket.getRemoteSocketAddress().toString());
     }
+
+    private void erroreUtToContactNonLoggato(PrintWriter scrittore, Utente utDaContattare) {
+        scrittore.write("02UTENTE:"+utDaContattare.getNomeUt() +" NON CONNESSO"+"\n");
+        scrittore.flush();
+        System.out.println("Errore utente da contattare non connesso:" + utDaContattare.getNomeUt());
+    }
+
 
     private void stop() {
         this.run = false;

@@ -1,6 +1,7 @@
 package Server;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class  Accessi{
     private ArrayList<Utente> listautenti;
@@ -50,6 +51,14 @@ public class  Accessi{
             flag = true;
         }
         return flag;
+    }
+
+    public LinkedList<String> getListaNomi(){
+        LinkedList<String> nomi = new LinkedList<>();
+        for (Utente u : listautenti){
+            nomi.add(u.getNomeUt());
+        }
+        return nomi;
     }
 }
 
