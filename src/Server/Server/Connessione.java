@@ -154,12 +154,13 @@ public class Connessione implements Runnable {
 
     private void listaUtenti(PrintWriter scrittore) throws IOException {
         ArrayList<Utente> list = acc.getListautenti();
-        String packet = "";
+        String packet = "21";
         for (Utente u : list) {
-            packet += "21" + u.getNomeUt()+";";
+            packet += u.getNomeUt()+";";
         }
         scrittore.write(packet);
         scrittore.flush();
+        System.out.println(packet);
         System.out.println("inviata lista utenti a "+ socket.getRemoteSocketAddress().toString());
     }
 
